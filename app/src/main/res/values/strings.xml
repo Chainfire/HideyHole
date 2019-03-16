@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Hidey Hole</string>
+    <string name="title_activity_main">Hidey Hole</string>
+    <string name="wallpaper_target_message">Set wallpaper as:</string>
+    <string name="wallpaper_target_both">Both</string>
+    <string name="wallpaper_target_home">Home</string>
+    <string name="wallpaper_target_lock">Lockscreen</string>
+    <string name="scale_source_message">Scale from:</string>
+    <string name="scale_source_s10e">S10e</string>
+    <string name="scale_source_s10">S10</string>
+    <string name="scale_source_s10plus">S10+</string>
+</resources>

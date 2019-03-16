@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.PreviewActivity"
+    android:id="@+id/activity_layout">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionName="wallpaperExplode"
+        android:scaleType="fitXY"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <View
+        android:id="@+id/cutout"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:layout_marginLeft="0px"
+        android:layout_marginTop="0px"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/info_panel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_percent=".8"
+        android:background="@drawable/round_translucent_background">
+        
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text=""
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text=""
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <TextView
+            android:id="@+id/text_brightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/white"
+            android:text="BR"
+            android:onClick="onBrightnessResetClick"
+            app:layout_constraintTop_toBottomOf="@+id/author"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seek_brightness"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/text_brightness"
+            app:layout_constraintTop_toTopOf="@id/text_brightness"
+            app:layout_constraintBottom_toBottomOf="@id/text_brightness"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/text_contrast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/white"
+            android:text="C"
+            android:onClick="onContrastResetClick"
+            app:layout_constraintTop_toBottomOf="@+id/text_brightness"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seek_contrast"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/text_brightness"
+            app:layout_constraintTop_toTopOf="@id/text_contrast"
+            app:layout_constraintBottom_toBottomOf="@id/text_contrast"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/text_blackpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/white"
+            android:text="BL"
+            android:onClick="onBlackpointResetClick"
+            app:layout_constraintTop_toBottomOf="@+id/text_contrast"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seek_blackpoint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/text_brightness"
+            app:layout_constraintTop_toTopOf="@id/text_blackpoint"
+            app:layout_constraintBottom_toBottomOf="@id/text_blackpoint"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/text_saturation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/white"
+            android:text="S"
+            android:onClick="onSaturationResetClick"
+            app:layout_constraintTop_toBottomOf="@+id/text_blackpoint"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seek_saturation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/text_brightness"
+            app:layout_constraintTop_toTopOf="@id/text_saturation"
+            app:layout_constraintBottom_toBottomOf="@id/text_saturation"
+            app:layout_constraintRight_toRightOf="parent" />
+
+
+        <ImageButton
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit"
+            android:layout_marginTop="8dp"
+            android:tint="@color/colorAccent"
+            android:onClick="onEditClick"
+            app:layout_constraintTop_toBottomOf="@id/text_saturation"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias=".25" />
+
+        <ImageButton
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_save"
+            android:layout_marginTop="8dp"
+            android:tint="@color/colorAccent"
+            android:onClick="onSaveClick"
+            app:layout_constraintTop_toBottomOf="@id/text_saturation"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias=".75" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/colorAccent"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminateOnly="true" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
