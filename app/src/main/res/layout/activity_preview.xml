@@ -158,7 +158,20 @@
             app:layout_constraintTop_toBottomOf="@id/text_saturation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias=".25" />
+            app:layout_constraintHorizontal_bias="0" />
+
+        <ImageButton
+            android:id="@+id/btn_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_download"
+            android:layout_marginTop="8dp"
+            android:tint="@color/colorAccent"
+            android:onClick="onDownloadClick"
+            app:layout_constraintTop_toBottomOf="@id/text_saturation"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias=".50" />
 
         <ImageButton
             android:id="@+id/btn_save"
@@ -171,7 +184,7 @@
             app:layout_constraintTop_toBottomOf="@id/text_saturation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias=".75" />
+            app:layout_constraintHorizontal_bias="1" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout

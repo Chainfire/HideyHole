@@ -18,8 +18,11 @@
 
 package eu.chainfire.hideyhole.ui;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.app.WallpaperManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -33,6 +36,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.transition.Transition;
 import android.view.View;
 import android.view.WindowManager;
@@ -46,6 +50,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
@@ -56,12 +62,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
 import eu.chainfire.hideyhole.BuildConfig;
 import eu.chainfire.hideyhole.R;
 import eu.chainfire.hideyhole.api.WallpaperResponse;
 
 public class PreviewActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_REQUEST_WRITE_EXTERNAL_STORAGE = 1001;
+
     private static final int BRIGHTNESS_DEFAULT = 100;
     private static final int BRIGHTNESS_DEFAULT_2 = 75;
     private static final int CONTRAST_DEFAULT = 0;
@@ -517,20 +526,46 @@ public class PreviewActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void onDownloadClick(View v) {
+        saveTask = new SaveTask(this, wallpaper, cmFinal, scaled == null ? bitmap : scaled, SaveTask.SaveTarget.DOWNLOAD);
+
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, REQUEST_CODE_REQUEST_WRITE_EXTERNAL_STORAGE);
+        } else {
+            saveTask.execute();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                saveTask.execute();
+            }
+        }
+    }
+
     public void onSaveClick(View v) {
-        saveTask = new SaveTask(this, cmFinal, scaled == null ? bitmap : scaled);
+        saveTask = new SaveTask(this, wallpaper, cmFinal, scaled == null ? bitmap : scaled, SaveTask.SaveTarget.WALLPAPER);
         saveTask.execute();
     }
 
     private static class SaveTask extends AsyncTask<Void, Void, Bitmap> {
+        public enum SaveTarget { WALLPAPER, DOWNLOAD }
+
         private final WeakReference<PreviewActivity> activity;
+        private final WallpaperResponse.Wallpaper wallpaper;
         private final ColorMatrix colorMatrix;
         private final Bitmap source;
+        private final SaveTarget target;
 
-        public SaveTask(PreviewActivity activity, ColorMatrix colorMatrix, Bitmap source) {
+        public SaveTask(PreviewActivity activity, WallpaperResponse.Wallpaper wallpaper, ColorMatrix colorMatrix, Bitmap source, SaveTarget target) {
             this.activity = new WeakReference<>(activity);
+            this.wallpaper = wallpaper;
             this.colorMatrix = colorMatrix;
             this.source = source;
+            this.target = target;
         }
 
         @Override
@@ -560,15 +595,18 @@ public class PreviewActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap bitmap) {
             PreviewActivity activity = this.activity.get();
             if (activity != null) {
+                if (target == SaveTarget.WALLPAPER) {
+                    (new AlertDialog.Builder(activity))
+                            .setMessage(R.string.wallpaper_target_message)
+                            .setNeutralButton(R.string.wallpaper_target_both, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_SYSTEM | WallpaperManager.FLAG_LOCK))
+                            .setNegativeButton(R.string.wallpaper_target_home, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_SYSTEM))
+                            .setPositiveButton(R.string.wallpaper_target_lock, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_LOCK))
+                            .show();
+                } else if (target == SaveTarget.DOWNLOAD) {
+                    saveWallpaper(bitmap);
+                }
                 activity.setProgressVisible(false);
                 activity.setInputEnabled(true);
-
-                (new AlertDialog.Builder(activity))
-                        .setMessage(R.string.wallpaper_target_message)
-                        .setNeutralButton(R.string.wallpaper_target_both, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_SYSTEM | WallpaperManager.FLAG_LOCK))
-                        .setNegativeButton(R.string.wallpaper_target_home, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_SYSTEM))
-                        .setPositiveButton(R.string.wallpaper_target_lock, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_LOCK))
-                        .show();
             }
         }
 
@@ -583,6 +621,42 @@ public class PreviewActivity extends AppCompatActivity {
                     home.addCategory(Intent.CATEGORY_HOME);
                     home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     activity.startActivity(home);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void saveWallpaper(Bitmap bitmap) {
+            PreviewActivity activity = this.activity.get();
+            if (activity != null) {
+                String filename = ("HideyHole_" + wallpaper.title + "_by_" + wallpaper.author).toLowerCase(Locale.ENGLISH).replaceAll("\\W+", "_") + ".png";
+                while (filename.contains("__")) {
+                    filename = filename.replace("__", "_");
+                }
+
+                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
+                if (file.exists()) file.delete();
+                try {
+                    FileOutputStream os = new FileOutputStream(file);
+                    try {
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                    } finally {
+                        os.close();
+                    }
+
+                    DownloadManager downloadManager = (DownloadManager)activity.getSystemService(DOWNLOAD_SERVICE);
+                    downloadManager.addCompletedDownload(
+                            wallpaper.title,
+                            wallpaper.title + " by " + wallpaper.author + " (Hidey Hole)",
+                            true,
+                            "image/png",
+                            file.getAbsolutePath(),
+                            file.length(),
+                            true
+                    );
+
+                    activity.finish();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
