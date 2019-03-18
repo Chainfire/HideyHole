@@ -395,6 +395,19 @@ public class PreviewActivity extends AppCompatActivity {
         src = src.scaleTo(res);
         dst = dst.scaleTo(res);
 
+        if (!BuildConfig.DEBUG) { // in debug mode we may want to adjust the current cutout for
+                                  // testing, and this code would be annoying in that case
+            if (src.equalsScaled(dst)) {
+                // including room for rounding errors at different resolutions, it seems the
+                // source and target gaps are the same, do nothing; scaling in this case may
+                // actually _introduce_ error.
+                this.scaled = null;
+                imageBackground.setImageBitmap(bitmap);
+                return;
+            }
+        }
+
+        // make sure our bitmap is fullscreen (only needed if we apply this scaling/realignment)
         if ((bitmap.getWidth() != res.x) || (bitmap.getHeight() != res.y)) {
             Bitmap scaled = Bitmap.createBitmap(res.x, res.y, Bitmap.Config.ARGB_8888, false);
             Canvas canvas = new Canvas(scaled);
