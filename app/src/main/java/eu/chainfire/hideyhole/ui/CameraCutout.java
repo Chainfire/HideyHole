@@ -109,6 +109,8 @@ public class CameraCutout {
         int id;
         Resources res = context.getResources();
 
+        // below is Samsung S10(?) specific and will crash on any other device!
+
         id = res.getIdentifier("status_bar_camera_top_margin", "dimen", "android");
         if (id == 0) throw new CameraCutoutException("Could not determine top margin");
         nativeMarginTop = res.getDimensionPixelSize(id);
