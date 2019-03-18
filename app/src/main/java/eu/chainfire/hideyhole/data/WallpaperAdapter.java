@@ -70,6 +70,12 @@ public class WallpaperAdapter extends PagedListAdapter<WallpaperResponse.Wallpap
         }
     };
 
+    @Override
+    public void onViewRecycled(@NonNull WallpaperViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.with(holder.imageView.getContext()).clear(holder.imageView);
+    }
+
     class WallpaperViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         WallpaperResponse.Wallpaper wallpaper;
