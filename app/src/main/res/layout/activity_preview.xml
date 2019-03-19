@@ -146,6 +146,20 @@
             app:layout_constraintBottom_toBottomOf="@id/text_saturation"
             app:layout_constraintRight_toRightOf="parent" />
 
+        <ImageButton
+            android:id="@+id/btn_browser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_browser"
+            android:layout_marginTop="8dp"
+            android:tint="@color/colorAccent"
+            android:onClick="onBrowserClick"
+            android:contentDescription="@string/btn_browser"
+            android:tooltipText="@string/btn_browser"
+            app:layout_constraintTop_toBottomOf="@id/text_saturation"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0" />
 
         <ImageButton
             android:id="@+id/btn_edit"
@@ -160,7 +174,7 @@
             app:layout_constraintTop_toBottomOf="@id/text_saturation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0" />
+            app:layout_constraintHorizontal_bias=".33" />
 
         <ImageButton
             android:id="@+id/btn_download"
@@ -175,7 +189,7 @@
             app:layout_constraintTop_toBottomOf="@id/text_saturation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias=".50" />
+            app:layout_constraintHorizontal_bias=".66" />
 
         <ImageButton
             android:id="@+id/btn_save"

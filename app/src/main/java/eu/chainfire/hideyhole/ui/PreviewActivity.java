@@ -34,6 +34,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -517,6 +518,10 @@ public class PreviewActivity extends AppCompatActivity {
         }
 
         return scale;
+    }
+
+    public void onBrowserClick(View v) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(wallpaper.source)));
     }
 
     public void onEditClick(View v) {

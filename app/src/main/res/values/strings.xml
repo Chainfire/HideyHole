@@ -5,6 +5,7 @@
     <string name="wallpaper_target_both">Both</string>
     <string name="wallpaper_target_home">Home</string>
     <string name="wallpaper_target_lock">Lockscreen</string>
+    <string name="btn_browser">Open source page in browser</string>
     <string name="btn_scale">Rescale</string>
     <string name="btn_download">Download to storage</string>
     <string name="btn_wallpaper">Apply as wallpaper</string>
