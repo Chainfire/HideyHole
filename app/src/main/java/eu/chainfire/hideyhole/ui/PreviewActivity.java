@@ -353,6 +353,7 @@ public class PreviewActivity extends AppCompatActivity {
     }
 
     private void fadeInfoPanel(final boolean visible) {
+        //TODO NPE reported by Google Play on next line, when called from onResume. Not sure how panelInfo can even be null...
         if (visible && (panelInfo.getVisibility() == View.VISIBLE)) return;
         if (entryAnimating) return;
 
