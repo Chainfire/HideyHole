@@ -33,4 +33,5 @@
     <string name="menu_category_urban">Urban</string>
     <string name="menu_category_other">Other</string>
     <string name="menu_reddit">Reddit...</string>
+    <string name="network_failure">Connectivity issue: could not retrieve wallpaper(s)</string>
 </resources>

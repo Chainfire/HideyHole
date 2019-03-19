@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,6 +40,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import eu.chainfire.hideyhole.R;
+import eu.chainfire.hideyhole.api.RetrofitClient;
 import eu.chainfire.hideyhole.api.WallpaperResponse;
 import eu.chainfire.hideyhole.data.WallpaperAdapter;
 import eu.chainfire.hideyhole.data.WallpaperDataSource;
@@ -54,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout refreshLayout;
     private ProgressBar progressBar;
+
+    private Handler handler = new Handler();
+
+    private RetrofitClient.FailureListener failureListener = () -> {
+        // using a handler because this may be called before looper is prepared (yeah really...)
+        handler.post(() -> Toast.makeText(this, R.string.network_failure, Toast.LENGTH_LONG).show());
+    };
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
@@ -102,10 +112,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         adapter.setListener(onAdapterClickListener);
+        RetrofitClient.getInstance().setOnFailureListener(failureListener);
     }
 
     @Override
     protected void onPause() {
+        RetrofitClient.getInstance().setOnFailureListener(null);
         adapter.setListener(null);
         super.onPause();
     }

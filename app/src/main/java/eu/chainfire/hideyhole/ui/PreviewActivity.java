@@ -46,6 +46,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -195,6 +196,12 @@ public class PreviewActivity extends AppCompatActivity {
                 .load(wallpaper.image.url)
                 .into(new CustomTarget<Drawable>() {
                     @Override public void onLoadCleared(@Nullable Drawable placeholder) {}
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        Toast.makeText(PreviewActivity.this, R.string.network_failure, Toast.LENGTH_LONG).show();
+                        PreviewActivity.this.finish();
+                    }
 
                     @Override
                     public void onResourceReady(@NonNull Drawable resource, @Nullable com.bumptech.glide.request.transition.Transition<? super Drawable> transition) {

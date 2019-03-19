@@ -25,25 +25,39 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
+    public interface FailureListener {
+        void onFailure();
+    }
+
     private static final String BASE_URL = "https://hideyhole.chainfire.eu/api/v1/";
     private static RetrofitClient mInstance;
     private Retrofit retrofit;
+    private FailureListener failure;
 
     private RetrofitClient() {
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create());
 
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
         if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
-
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(interceptor)
-                    .build();
-
-            builder.client(client);
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            clientBuilder.addInterceptor(loggingInterceptor);
         }
+
+        clientBuilder.addInterceptor(chain -> {
+            try {
+                return chain.proceed(chain.request());
+            } catch (Exception e) {
+                if (failure != null) {
+                    failure.onFailure();
+                }
+                throw e;
+            }
+        });
+        builder.client(clientBuilder.build());
 
         retrofit = builder.build();
     }
@@ -57,5 +71,9 @@ public class RetrofitClient {
 
     public Api getApi() {
         return retrofit.create(Api.class);
+    }
+
+    public void setOnFailureListener(FailureListener listener) {
+        failure = listener;
     }
 }
