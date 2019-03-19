@@ -100,6 +100,7 @@ public class WallpaperAdapter extends PagedListAdapter<WallpaperResponse.Wallpap
             if (wallpaper != null) {
                 Glide.with(imageView.getContext())
                         .load(wallpaper.thumbnail.url)
+                        .override(wallpaper.thumbnail.width, wallpaper.thumbnail.height)
                         .into(imageView);
             }
         }
