@@ -18,8 +18,6 @@
 
 package eu.chainfire.hideyhole.data;
 
-import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
 import eu.chainfire.hideyhole.api.RetrofitClient;
