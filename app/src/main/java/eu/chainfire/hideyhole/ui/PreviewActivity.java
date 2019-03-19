@@ -664,6 +664,7 @@ public class PreviewActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap bitmap) {
             PreviewActivity activity = this.activity.get();
             if (activity != null) {
+                boolean finished = false;
                 if (target == SaveTarget.WALLPAPER) {
                     (new AlertDialog.Builder(activity))
                             .setMessage(R.string.wallpaper_target_message)
@@ -672,10 +673,12 @@ public class PreviewActivity extends AppCompatActivity {
                             .setPositiveButton(R.string.wallpaper_target_lock, (dialog, which) -> applyWallpaper(bitmap, WallpaperManager.FLAG_LOCK))
                             .show();
                 } else if (target == SaveTarget.DOWNLOAD) {
-                    saveWallpaper(bitmap);
+                    finished = saveWallpaper(bitmap);
                 }
-                activity.setProgressVisible(false);
-                activity.setInputEnabled(true);
+                if (!finished) {
+                    activity.setProgressVisible(false);
+                    activity.setInputEnabled(true);
+                }
             }
         }
 
@@ -696,7 +699,7 @@ public class PreviewActivity extends AppCompatActivity {
             }
         }
 
-        private void saveWallpaper(Bitmap bitmap) {
+        private boolean saveWallpaper(Bitmap bitmap) {
             PreviewActivity activity = this.activity.get();
             if (activity != null) {
                 String title = wallpaper.title;
@@ -731,10 +734,12 @@ public class PreviewActivity extends AppCompatActivity {
                     );
 
                     activity.finish();
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            return false;
         }
     }
 }
