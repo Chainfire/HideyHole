@@ -37,4 +37,5 @@
     <string name="network_failure">Connectivity issue: could not retrieve wallpaper(s)</string>
     <string name="no_camera_cutout">Camera cutout could not be determined. Are you using an S10 ?</string>
     <string name="no_image_loaded">Image not loaded</string>
+    <string name="motion_effect_enabled">Motion effect is enabled for wallpapers. This does not look right with wallpapers meant to obscure the camera cutout. Unfortunately we cannot disable it for you, but you can disable it yourself by setting a wallpaper (for your home screen only) in the launcher, and unchecking the motion effect option. You only need to do this once unless you turn it back on again.</string>
 </resources>

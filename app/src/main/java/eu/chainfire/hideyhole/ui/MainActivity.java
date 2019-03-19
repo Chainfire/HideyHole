@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -32,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
@@ -96,6 +98,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         recyclerView.setAdapter(adapter);
+
+        if (Settings.System.getInt(getContentResolver(), "wallpaper_tilt_status", -1) == 1) {
+            // Unfortunately we cannot change this setting even if we have the WRITE_SETTINGS
+            // permission, it causes an exception. The only known workaround at this time is to
+            // downgrade the app to API 22 (haven't tested, but Google search says so).
+            // So just warn the user.
+            (new AlertDialog.Builder(this))
+                    .setMessage(R.string.motion_effect_enabled)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
     }
 
     private WallpaperAdapter.Listener onAdapterClickListener = new WallpaperAdapter.Listener() {
