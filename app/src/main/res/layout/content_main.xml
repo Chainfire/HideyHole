@@ -17,17 +17,23 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="12dp"
-                android:layout_gravity="center"
-                android:indeterminateTint="@android:color/white"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:indeterminateOnly="true" />
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@android:color/white"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminateOnly="true" />
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

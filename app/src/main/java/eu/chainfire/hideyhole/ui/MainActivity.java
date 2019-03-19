@@ -26,14 +26,19 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import eu.chainfire.hideyhole.R;
 import eu.chainfire.hideyhole.api.WallpaperResponse;
 import eu.chainfire.hideyhole.data.WallpaperAdapter;
@@ -48,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private WallpaperAdapter adapter;
     private WallpaperViewModel wallpaperViewModel;
+
+    private SwipeRefreshLayout refreshLayout;
+    private ProgressBar progressBar;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +73,19 @@ public class MainActivity extends AppCompatActivity {
         WallpaperDataSource.setFilterSort(prefs.getString(PREF_FILTER_SORT, WallpaperDataSource.SORT_DEFAULT));
         WallpaperDataSource.setFilterDevice(prefs.getString(PREF_FILTER_DEVICE, WallpaperDataSource.DEVICE_DEFAULT));
         WallpaperDataSource.setFilterCategory(prefs.getString(PREF_FILTER_CATEGORY, WallpaperDataSource.CATEGORY_DEFAULT));
+        refreshLayout = findViewById(R.id.refresh);
+        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent, getTheme()));
+        refreshLayout.setOnRefreshListener(() -> getDataSource().invalidate());
+        progressBar = findViewById(R.id.progress_bar);
 
         adapter = new WallpaperAdapter();
 
         wallpaperViewModel = ViewModelProviders.of(this).get(WallpaperViewModel.class);
-        wallpaperViewModel.getLivePagedList().observe(this, adapter::submitList);
+        wallpaperViewModel.getLivePagedList().observe(this, wallpapers -> {
+            adapter.submitList(wallpapers);
+            progressBar.setVisibility(View.GONE);
+            refreshLayout.setRefreshing(false);
+        });
 
         recyclerView.setAdapter(adapter);
     }
