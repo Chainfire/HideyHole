@@ -699,7 +699,12 @@ public class PreviewActivity extends AppCompatActivity {
         private void saveWallpaper(Bitmap bitmap) {
             PreviewActivity activity = this.activity.get();
             if (activity != null) {
-                String filename = ("HideyHole_" + wallpaper.title + "_by_" + wallpaper.author).toLowerCase(Locale.ENGLISH).replaceAll("\\W+", "_") + ".png";
+                String title = wallpaper.title;
+                String author = wallpaper.author;
+                if ((title == null) || title.trim().equals("")) title = "Unknown";
+                if ((author == null) || author.trim().equals("")) author = "Unknown";
+                
+                String filename = ("HideyHole_" + title + "_by_" + author).toLowerCase(Locale.ENGLISH).replaceAll("\\W+", "_") + ".png";
                 while (filename.contains("__")) {
                     filename = filename.replace("__", "_");
                 }
@@ -716,8 +721,8 @@ public class PreviewActivity extends AppCompatActivity {
 
                     DownloadManager downloadManager = (DownloadManager)activity.getSystemService(DOWNLOAD_SERVICE);
                     downloadManager.addCompletedDownload(
-                            wallpaper.title,
-                            wallpaper.title + " by " + wallpaper.author + " (Hidey Hole)",
+                            title,
+                            title + " by " + author + " (Hidey Hole)",
                             true,
                             "image/png",
                             file.getAbsolutePath(),
