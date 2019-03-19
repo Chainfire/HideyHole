@@ -571,9 +571,20 @@ public class PreviewActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void onDownloadClick(View v) {
-        saveTask = new SaveTask(this, wallpaper, cmFinal, scaled == null ? bitmap : scaled, SaveTask.SaveTarget.DOWNLOAD);
+    public boolean checkSaveable() {
+        // the crash that this should work around could not be reproduced, not sure what's going on
+        // we really shouldn't be able to even reach this code if no image is loaded, but an
+        // NPE is reported nonetheless
+        boolean ok = (wallpaper != null) && (scaled != null) || (bitmap != null);
+        if (!ok) {
+            Toast.makeText(this, R.string.no_image_loaded, Toast.LENGTH_LONG).show();
+        }
+        return ok;
+    }
 
+    public void onDownloadClick(View v) {
+        if (!checkSaveable()) return;
+        saveTask = new SaveTask(this, wallpaper, cmFinal, scaled == null ? bitmap : scaled, SaveTask.SaveTarget.DOWNLOAD);
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, REQUEST_CODE_REQUEST_WRITE_EXTERNAL_STORAGE);
         } else {
@@ -592,6 +603,7 @@ public class PreviewActivity extends AppCompatActivity {
     }
 
     public void onSaveClick(View v) {
+        if (!checkSaveable()) return;
         saveTask = new SaveTask(this, wallpaper, cmFinal, scaled == null ? bitmap : scaled, SaveTask.SaveTarget.WALLPAPER);
         saveTask.execute();
     }
