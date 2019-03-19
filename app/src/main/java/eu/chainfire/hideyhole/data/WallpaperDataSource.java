@@ -28,7 +28,7 @@ import retrofit2.Response;
 
 public class WallpaperDataSource extends PageKeyedDataSource<Integer, WallpaperResponse.Wallpaper> {
     public static final int PAGE_FIRST = 1;
-    public static final int PAGE_SIZE = 100;
+    public static final int PAGE_SIZE = 50;
 
     public static final String DEVICE_DEFAULT = "*";
     public static final String CATEGORY_DEFAULT = "*";

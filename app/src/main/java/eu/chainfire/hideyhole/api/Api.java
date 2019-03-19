@@ -20,9 +20,13 @@ package eu.chainfire.hideyhole.api;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface Api {
     @GET("wallpapers")
     Call<WallpaperResponse> getWallpapers(@Query("page") int page, @Query("device") String device, @Query("category") String category, @Query("sort") String sort);
+
+    @PUT("upvote")
+    Call<Void> putUpvote(@Query("id") long id);
 }

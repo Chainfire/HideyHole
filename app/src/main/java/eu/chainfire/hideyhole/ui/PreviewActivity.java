@@ -68,7 +68,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
 import eu.chainfire.hideyhole.BuildConfig;
 import eu.chainfire.hideyhole.R;
+import eu.chainfire.hideyhole.api.RetrofitClient;
 import eu.chainfire.hideyhole.api.WallpaperResponse;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PreviewActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_REQUEST_WRITE_EXTERNAL_STORAGE = 1001;
@@ -613,6 +617,17 @@ public class PreviewActivity extends AppCompatActivity {
             paint.setFilterBitmap(true);
             paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
             canvas.drawBitmap(source, 0, 0, paint);
+
+            RetrofitClient.getInstance().getApi().putUpvote(wallpaper.id).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                }
+            });
+
             return dest;
         }
 
