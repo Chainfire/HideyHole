@@ -114,6 +114,8 @@ public class PreviewActivity extends AppCompatActivity {
     private SeekBar seekBlackpoint;
     private SeekBar seekSaturation;
 
+    private boolean inputEnabled = true;
+
     private ColorMatrixTranslate cmBrightness = new ColorMatrixTranslate();
     private ColorMatrixTranslate cmContrast = new ColorMatrixTranslate();
     private ColorMatrixTranslate cmBlackpoint = new ColorMatrixTranslate();
@@ -247,7 +249,7 @@ public class PreviewActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_layout), (view, insets) -> {
             cameraCutout.updateFromInsets(insets);
 
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG && cameraCutout.isValid()) {
                 Rect r = cameraCutout.getCutout().getArea();
                 if (r != null) {
                     View v = findViewById(R.id.cutout);
@@ -265,6 +267,12 @@ public class PreviewActivity extends AppCompatActivity {
                             cameraCutout.getCurrentResolution().x, cameraCutout.getCurrentResolution().y
                     ));
                 }
+            }
+
+            setInputEnabled(null);
+
+            if (!cameraCutout.isValid()) {
+                Toast.makeText(PreviewActivity.this, R.string.no_camera_cutout, Toast.LENGTH_LONG).show();
             }
 
             return insets;
@@ -323,8 +331,14 @@ public class PreviewActivity extends AppCompatActivity {
         imageBackground.setColorFilter(new ColorMatrixColorFilter(cmFinal));
     }
 
-    private void setInputEnabled(boolean enable) {
-        btnEdit.setEnabled(enable);
+    private void setInputEnabled(Boolean enable) {
+        if (enable == null) {
+            enable = inputEnabled;
+        } else {
+            inputEnabled = enable;
+        }
+
+        btnEdit.setEnabled(enable && cameraCutout.isValid());
         btnEdit.setClickable(enable);
         btnSave.setEnabled(enable);
         btnSave.setClickable(enable);
@@ -403,6 +417,8 @@ public class PreviewActivity extends AppCompatActivity {
     }
 
     private void scale(CameraCutout.Cutout src, CameraCutout.Cutout dst, Point res) {
+        if ((src == null) || (dst == null)) return;
+
         // scale to res
         src = src.scaleTo(res);
         dst = dst.scaleTo(res);

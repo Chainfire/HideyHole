@@ -85,12 +85,6 @@ public class CameraCutout {
         }
     }
 
-    public class CameraCutoutException extends RuntimeException {
-        public CameraCutoutException(String message) {
-            super(message);
-        }
-    }
-
     // these were determined by running on each devices, algorithm seems perfect for S10/S10E,
     // but has a few extra pixels on the right for S10PLUS.
     public static final Cutout CUTOUT_S10E = new Cutout(new Rect(931, 25, 1021, 116), new Point(1080, 2280));
@@ -109,15 +103,13 @@ public class CameraCutout {
         int id;
         Resources res = context.getResources();
 
-        // below is Samsung S10(?) specific and will crash on any other device!
+        // below is Samsung S10(?) specific. Newer firmwares on other Samsung devices also seem to have these values present.
 
         id = res.getIdentifier("status_bar_camera_top_margin", "dimen", "android");
-        if (id == 0) throw new CameraCutoutException("Could not determine top margin");
-        nativeMarginTop = res.getDimensionPixelSize(id);
+        nativeMarginTop = id > 0 ? res.getDimensionPixelSize(id) : 0;
 
         id = res.getIdentifier("status_bar_camera_padding", "dimen", "android");
-        if (id == 0) throw new CameraCutoutException("Could not determine right margin");
-        nativeMarginRight = res.getDimensionPixelSize(id);
+        nativeMarginRight = id > 0 ? res.getDimensionPixelSize(id) : 0;
     }
 
     public Point getNativeResolution() {
@@ -153,8 +145,9 @@ public class CameraCutout {
     }
 
     public void updateFromInsets(WindowInsetsCompat insets) {
+        if ((insets == null) || (insets.getDisplayCutout() == null)) return;
         List<Rect> rects = insets.getDisplayCutout().getBoundingRects();
-        if (rects.size() != 1) throw new CameraCutoutException("Expected 1 bounding rect, got " + String.valueOf(rects.size()));
+        if (rects.size() != 1) return;
         updateFromBoundingRect(rects.get(0));
     }
 
@@ -164,5 +157,9 @@ public class CameraCutout {
 
     public void applyCutout(Cutout cutout) {
         this.cutout = cutout.scaleTo(getCurrentResolution());
+    }
+
+    public boolean isValid() {
+        return cutout != null;
     }
 }

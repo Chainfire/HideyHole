@@ -35,4 +35,5 @@
     <string name="menu_category_other">Other</string>
     <string name="menu_reddit">Reddit...</string>
     <string name="network_failure">Connectivity issue: could not retrieve wallpaper(s)</string>
+    <string name="no_camera_cutout">Camera cutout could not be determined. Are you using an S10 ?</string>
 </resources>
