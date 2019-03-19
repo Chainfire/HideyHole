@@ -39,5 +39,8 @@ public class WallpaperResponse {
         public WallpaperImage thumbnail;
     }
 
-    public List<Wallpaper> wallpapers;
+    public int count;
+    public String next;
+    public String previous;
+    public List<Wallpaper> results;
 }

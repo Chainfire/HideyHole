@@ -18,6 +18,8 @@
 
 package eu.chainfire.hideyhole.data;
 
+import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
 import eu.chainfire.hideyhole.api.RetrofitClient;
@@ -27,19 +29,35 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class WallpaperDataSource extends PageKeyedDataSource<Integer, WallpaperResponse.Wallpaper> {
-    private static final int PAGE_FIRST = 1;
-    public static final int PAGE_SIZE = 50;
+    public static final int PAGE_FIRST = 1;
+    public static final int PAGE_SIZE = 100;
+
+    public static final String DEVICE_DEFAULT = "*";
+    public static final String CATEGORY_DEFAULT = "*";
+    public static final String SORT_DEFAULT = "popular";
+
+    private static String device = DEVICE_DEFAULT;
+    private static String category = CATEGORY_DEFAULT;
+    private static String sort = SORT_DEFAULT;
+
+    public static String getFilterDevice() { return device; }
+    public static void setFilterDevice(String device) { WallpaperDataSource.device = device; }
+
+    public static String getFilterCategory() { return category; }
+    public static void setFilterCategory(String category) { WallpaperDataSource.category = category; }
+
+    public static String getFilterSort() { return sort; }
+    public static void setFilterSort(String sort) { WallpaperDataSource.sort = sort; }
 
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, WallpaperResponse.Wallpaper> callback) {
         RetrofitClient.getInstance()
-                //.getApi().getAnswers(PAGE_FIRST, PAGE_SIZE, SITE_NAME) //TODO
-                .getApi().getWallpapers()
+                .getApi().getWallpapers(PAGE_FIRST, device, category, sort)
                 .enqueue(new Callback<WallpaperResponse>() {
                     @Override
                     public void onResponse(Call<WallpaperResponse> call, Response<WallpaperResponse> response) {
                         if (response.body() != null) {
-                            callback.onResult(response.body().wallpapers, null, null /*PAGE_FIRST + 1*/);  //TODO
+                            callback.onResult(response.body().results, null, PAGE_FIRST + 1);
                         }
                     }
 
@@ -52,19 +70,13 @@ public class WallpaperDataSource extends PageKeyedDataSource<Integer, WallpaperR
     @Override
     public void loadBefore(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, WallpaperResponse.Wallpaper> callback) {
         RetrofitClient.getInstance()
-                //.getApi().getAnswers(params.key, PAGE_SIZE, SITE_NAME) //TODO
-                .getApi().getWallpapers()
+                .getApi().getWallpapers(params.key, device, category, sort)
                 .enqueue(new Callback<WallpaperResponse>() {
                     @Override
                     public void onResponse(Call<WallpaperResponse> call, Response<WallpaperResponse> response) {
-                        //if the current page is greater than one
-                        //we are decrementing the page number
-                        //else there is no previous page
                         Integer adjacentKey = (params.key > 1) ? params.key - 1 : null;
                         if (response.body() != null) {
-                            //passing the loaded data
-                            //and the previous page key
-                            callback.onResult(response.body().wallpapers, adjacentKey);
+                            callback.onResult(response.body().results, adjacentKey);
                         }
                     }
 
@@ -77,19 +89,13 @@ public class WallpaperDataSource extends PageKeyedDataSource<Integer, WallpaperR
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, WallpaperResponse.Wallpaper> callback) {
         RetrofitClient.getInstance()
-                .getApi().getWallpapers()
-                //.getAnswers(params.key, PAGE_SIZE, SITE_NAME) //TODO
+                .getApi().getWallpapers(params.key, device, category, sort)
                 .enqueue(new Callback<WallpaperResponse>() {
                     @Override
                     public void onResponse(Call<WallpaperResponse> call, Response<WallpaperResponse> response) {
                         if (response.body() != null) {
-                            //if the response has next page
-                            //incrementing the next page number
-                            //Integer key = response.body().has_more ? params.key + 1 : null; //TODO
-                            Integer key = null;
-
-                            //passing the loaded data and next page value
-                            callback.onResult(response.body().wallpapers, key);
+                            Integer key = response.body().next != null ? params.key + 1 : null;
+                            callback.onResult(response.body().results, key);
                         }
                     }
 

@@ -25,21 +25,26 @@ import androidx.paging.PagedList;
 import eu.chainfire.hideyhole.api.WallpaperResponse;
 
 public class WallpaperViewModel extends ViewModel {
-    private LiveData livePagedList;
+    private final LiveData livePagedList;
+    private final WallpaperDataSourceFactory factory;
 
     public WallpaperViewModel() {
-        WallpaperDataSourceFactory dataSourceFactory = new WallpaperDataSourceFactory();
+        factory = new WallpaperDataSourceFactory();
 
         PagedList.Config pagedListConfig =
                 (new PagedList.Config.Builder())
                         .setEnablePlaceholders(false)
                         .setPageSize(WallpaperDataSource.PAGE_SIZE).build();
  
-        livePagedList = (new LivePagedListBuilder(dataSourceFactory, pagedListConfig))
+        livePagedList = (new LivePagedListBuilder(factory, pagedListConfig))
                 .build();
     }
 
     public LiveData<PagedList<WallpaperResponse.Wallpaper>> getLivePagedList() {
         return livePagedList;
+    }
+
+    public WallpaperDataSourceFactory getFactory() {
+        return factory;
     }
 }

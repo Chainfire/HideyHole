@@ -21,17 +21,20 @@ package eu.chainfire.hideyhole.data;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
-import androidx.paging.PageKeyedDataSource;
 import eu.chainfire.hideyhole.api.WallpaperResponse;
 
 public class WallpaperDataSourceFactory extends DataSource.Factory {
-    private MutableLiveData<PageKeyedDataSource<Integer, WallpaperResponse.Wallpaper>> liveData = new MutableLiveData<>();
+    private MutableLiveData<WallpaperDataSource> mutableLiveData = new MutableLiveData<>();
 
     @NonNull
     @Override
     public DataSource<Integer, WallpaperResponse.Wallpaper> create() {
         WallpaperDataSource dataSource = new WallpaperDataSource();
-        liveData.postValue(dataSource);
+        mutableLiveData.postValue(dataSource);
         return dataSource;
+    }
+
+    public MutableLiveData<WallpaperDataSource> getMutableLiveData() {
+        return mutableLiveData;
     }
 }
