@@ -338,7 +338,7 @@ public class PreviewActivity extends AppCompatActivity {
             inputEnabled = enable;
         }
 
-        btnEdit.setEnabled(enable && cameraCutout.isValid());
+        btnEdit.setEnabled(enable && ((cameraCutout == null) || cameraCutout.isValid()));
         btnEdit.setClickable(enable);
         btnSave.setEnabled(enable);
         btnSave.setClickable(enable);
