@@ -6,8 +6,8 @@ android {
         applicationId "eu.chainfire.hideyhole"
         minSdkVersion 28
         targetSdkVersion 28
-        versionCode 102
-        versionName "1.02"
+        versionCode 103
+        versionName "1.03"
     }
     buildTypes {
         release {
